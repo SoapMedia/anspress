@@ -1041,6 +1041,12 @@ class AP_Form_Hooks {
 	 * @return int
 	 */
 	public static function create_user( &$values, &$args, $manual ) {
+        $user = get_user_by('email', $values['email']['value']);
+        if ($user) {
+            $args['post_author'] = $user->ID;
+            return;
+        }
+
 		$email   = $values['email']['value'];
 		$user_id = wp_insert_user(
 			array(
@@ -1065,7 +1071,8 @@ class AP_Form_Hooks {
 		}
 
 		// Send the notification.
-		wp_new_user_notification( $user_id, null, 'both' );
+        // We do not wat the user to be sent a notification.
+		//wp_new_user_notification( $user_id, null, 'both' );
 
 		$args['post_author'] = $user_id;
 	}
